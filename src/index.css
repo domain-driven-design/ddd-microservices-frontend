@@ -1,0 +1,135 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+@layer base {
+    :root {
+        --white: #ffffff;
+        --brand-1: #F0F7FF;
+        --brand-2: #A8CEFF;
+        --brand-3: #5794FF;
+        --brand-4: #2D73FF;
+
+        --secondary: #DEEAFF;
+        --secondary-2: #102658;
+        --secondary-3: #627EFF;
+
+        --funtional-success: #52C41A;
+        --funtional-warning: #FFA940;
+        --funtional-warning-2: #E4B715;
+        --funtional-error: #FF4D4F;
+        --funtional-help: #13C2C2;
+        --funtional-notice: #1890FF;
+
+        --deep-border-success: #73D13D;
+        --deep-border-warning: #FFC069;
+        --deep-border-warning-2: #EBC950;
+        --deep-border-error: #FF7875;
+        --deep-border-help: #36CFC9;
+        --deep-border-notice: #40A9FF;
+
+        --light-border-success: #B7EB8F;
+        --light-border-warning: #FFE7BA;
+        --light-border-warning-2: #FFE177;
+        --light-border-error: #FFA39E;
+        --light-border-help: #87E8DE;
+        --light-border-notice: #91D5FF;
+
+        --hover-success: #73D13D;
+        --hover-warning: #FFC069;
+        --hover-warning-2: #EBC950;
+        --hover-error: #FF7875;
+        --hover-help: #36CFC9;
+        --hover-notice: #40A9FF;
+
+        --bg-success: #F8FFF1;
+        --bg-warning: #FFF7E6;
+        --bg-warning-2: #FFFAE8;
+        --bg-error: #FFF1F0;
+        --bg-help: #E6FFFB;
+        --bg-notice: #EFFAFF;
+
+        --gray-head: #262626;
+        --gray-content: #595959;
+        --gray-content-2: #8C8C8C;
+        --gray-disabled: #BFBFBF;
+        --gray-border: #D9D9D9;
+        --gray-divider: #E5E5E5;
+        --gray-divider-2: #F0F0F0;
+        --gray-disabled-bg: #F7F7F7;
+
+        --group-node-gap: 40px;
+        --group-node-gap-reverse: -40px;
+        --group-node-bg: #ffffff;
+        --node-with-group-node-gap: 64px;
+        --node-with-group-node-gap-reverse: -64px;
+        --formula-node-gap: 64px;
+    }
+
+    .node {
+        @apply flex flex-col gap-2 p-2 shadow relative h-[88px] min-w-[187px] rounded;
+    }
+
+    .group-node {
+        @apply absolute flex flex-col p-4 rounded items-center;
+        gap: var(--group-node-gap);
+        background-color: var(--group-node-bg);
+    }
+
+    .node-operator-line {
+        @apply absolute left-1/2 transform -translate-x-1/2;
+        top: var(--group-node-gap-reverse);
+        height: var(--group-node-gap);
+    }
+
+    .group-node-operator-line {
+        @apply absolute top-1/2 transform -translate-y-1/2;
+        right: var(--node-with-group-node-gap-reverse);
+    }
+
+    .operator-line-horizontal-dash {
+        background-size: 8px auto !important;
+        background-image: linear-gradient(
+                to right,
+                var(--gray-disabled),
+                var(--gray-disabled) 25%,
+                transparent 25%,
+                transparent 75%,
+                var(--gray-disabled) 75%,
+                var(--gray-disabled) 100%
+        );
+    }
+    .operator-line-vertical-dash {
+        background-size: 8px auto !important;
+        background-image: linear-gradient(
+                to bottom,
+                var(--gray-disabled),
+                var(--gray-disabled) 25%,
+                transparent 25%,
+                transparent 75%,
+                var(--gray-disabled) 75%,
+                var(--gray-disabled) 100%
+        );
+    }
+
+    .operator-line-formula {
+        @apply absolute z-30 top-1/2 transform -translate-y-1/2;
+        width: var(--formula-node-gap);
+        height: 2px;
+        right: calc(0px - var(--formula-node-gap));
+    }
+
+    .operator-line-formula-dash {
+        background-size: 8px auto !important;
+        background: linear-gradient(
+                to right,
+                var(--white),
+                var(--white) 25%,
+                transparent 25%,
+                transparent 75%,
+                var(--white) 75%,
+                var(--white) 100%
+        ), repeat-x;
+    }
+}
