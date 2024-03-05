@@ -1,9 +1,6 @@
 import Panel from "./Panel.tsx";
 
 const Menu = () => {
-
-
-
     return (
         <Panel className="left-6 top-[80px] w-[216px] max-h-[503px] flex flex-col text-sm py-4">
             <div className="px-6 py-[10px]">目标利率</div>
