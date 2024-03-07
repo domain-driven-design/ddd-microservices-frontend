@@ -35,9 +35,8 @@ const BackgroundAndOperatorMap: Record<EOperator, string> = {
 export default memo(({data, defaultShowGroupNode, last, root, first}: TProps) => {
     const {data: variableMap, isLoading} = useFormulaVariableMap();
     const store = useStore((store) => store);
-    const {setCenter} = useReactFlow();
+    const {setCenter, setViewport} = useReactFlow();
     const transform = useStore((state) => state.transform);
-    const domNode = useStore((state) => state.domNode);
     const nodeRef = useRef<HTMLDivElement>(null);
     const modalRef = useRef<{ modalWidth: number; rect: any }>(null);
     const [showGroupNode, setShowGroupNode] = useState(defaultShowGroupNode);
@@ -47,7 +46,7 @@ export default memo(({data, defaultShowGroupNode, last, root, first}: TProps) =>
 
     const childrenNotEqualParams = data.children?.length !== Object.keys(data.params || {}).length;
     const hasFormulaModal = (data.children?.length === 0 || childrenNotEqualParams) && data.expression;
-    const hasGroupNode = data.children?.length > 0;
+    const hasGroupNode = data.children?.length > 0 && !childrenNotEqualParams;
     const nodeWidth = nodeRef.current?.offsetWidth;
 
     const variable = variableMap[data.name];
@@ -72,14 +71,32 @@ export default memo(({data, defaultShowGroupNode, last, root, first}: TProps) =>
     }
 
     useEffect(() => {
-        if (formulaModalControl.visible && Number(modalRef.current?.modalWidth) > 0) {
-            const rect = modalRef.current?.rect;
-            setCenter(rect.x + rect.width / 2 - transform[0], rect.y + rect.height / 2 - transform[1], {
-                zoom: 1,
-                duration: 200
-            })
-        }
+        setTimeout(() => {
+            if (formulaModalControl.visible && Number(modalRef.current?.modalWidth) > 0) {
+                const rect = modalRef.current?.rect;
+                setCenter(rect.x + rect.width / 2 - transform[0], rect.y + rect.height / 2 - transform[1], {
+                    zoom: 1,
+                    duration: 200
+                })
+            }
+        })
     }, [modalRef.current?.modalWidth, formulaModalControl.visible])
+
+
+    useEffect(() => {
+        if (data) {
+            setShowGroupNode(defaultShowGroupNode);
+            setTimeout(() => {
+                setViewport({
+                    zoom: 1,
+                    x: 264,
+                    y: 80,
+                }, {
+                    duration: 100
+                })
+            });
+        }
+    }, [data])
 
     return (
         <div className="relative flex">
@@ -116,18 +133,18 @@ export default memo(({data, defaultShowGroupNode, last, root, first}: TProps) =>
                 />
             )}
 
-            <div
-                ref={nodeRef}
-                className={cn(
-                    "node",
-                    BackgroundAndOperatorMap[data.operator ? data.operator : root ? EOperator.EQUAL : EOperator.ADD],
-                    hasFormulaModal && formulaModalControl.visible && "z-50",
-                )}
-                onClick={handleClick}
-            >
-                {isLoading ? (
-                    <Spin />
-                ) : (
+            {isLoading ? (
+                <Spin/>
+            ) : (
+                <div
+                    ref={nodeRef}
+                    className={cn(
+                        "node",
+                        BackgroundAndOperatorMap[data.operator ? data.operator : root ? EOperator.EQUAL : EOperator.ADD],
+                        hasFormulaModal && formulaModalControl.visible && "z-50",
+                    )}
+                    onClick={handleClick}
+                >
                     <div className="flex justify-center items-center gap-1">
                         {getTagFlag(data.name) && (
                             <TextTag
@@ -143,15 +160,15 @@ export default memo(({data, defaultShowGroupNode, last, root, first}: TProps) =>
                                 "bg-[#627EFF]": data.operator === EOperator.DIV,
                                 "bg-[#FF4D4F]": data.operator === EOperator.MUL,
                             })}>
-                                <Sigma className={cn("w-3 h-3 text-white")} />
+                                <Sigma className={cn("w-3 h-3 text-white")}/>
                             </div>
                         )}
                     </div>
-                )}
-                <div className="py-3 bg-[#fff] rounded whitespace-nowrap flex justify-center">
-                    {formatNodeValue(data.value, variable?.type)}
+                    <div className="py-3 bg-[#fff] rounded whitespace-nowrap flex justify-center">
+                        {formatNodeValue(data.value, variable?.type)}
+                    </div>
                 </div>
-            </div>
+            )}
             {hasFormulaModal && formulaModalControl.visible && (
                 <FormulaModal
                     ref={modalRef}

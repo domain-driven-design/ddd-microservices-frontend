@@ -13,7 +13,7 @@ export const calculateApi = () => {
             "originalAmount": 1000,
             "basicRefactor": 0.70
         }
-    });
+    }).then(res => res.data);
 }
 
 

@@ -6,7 +6,7 @@ const useFormulaVariableMap = () => {
     const {data, isLoading} = useQuery(
         ["getBusinessRuleApi", "expression_variables"],
         () => getBusinessRuleApi("expression_variables"),
-        {cacheTime: 1000 * 60 * 60 * 24 * 7}
+        {staleTime: 1000 * 60 * 60 * 1}
     );
     return {
         data: data || {},

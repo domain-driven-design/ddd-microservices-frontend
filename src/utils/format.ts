@@ -20,7 +20,6 @@ const formatNumber = (value: string, options: { decimal?: number, unit?: string 
 }
 
 export const formatNodeValue = (value: string, type: EFormulaVariableType): string => {
-    console.log(type);
     switch (type) {
         case EFormulaVariableType.PERCENT:
             return formatPercent(value, {decimal: 4, unit: '%'});

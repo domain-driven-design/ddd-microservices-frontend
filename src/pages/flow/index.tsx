@@ -1,49 +1,28 @@
 import ReactFlow, {MiniMap, Controls} from 'reactflow';
 import 'reactflow/dist/style.css';
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import Node from "../../components/Node.tsx";
 import Panel from "../../components/Panel.tsx";
 import {transformData} from "../../utils/common.ts";
 import Menu from "../../components/Menu.tsx";
+import {Spin} from "antd";
 
 const nodeTypes = {
     price: (props: any) => {
+        if (!props.data) {
+            return <Spin />
+        }
+
         return <Node {...props} root last first/>;
     },
 };
 
 export default function Flow() {
-    const [data, setData] = useState(transformData({
-        "name": "upperLimitInterestRate",
-        "expression": "benchmarkInterestRate*rmbAmount",
-        "value": "250.0",
-        "children": [
-            {
-                "name": "benchmarkInterestRate",
-                "expression": "basicRefactor*listingPrice",
-                "value": "0.25",
-                "children": [
-                ],
-                "params": {
-                    "listingPrice": "0.50",
-                    "basicRefactor": "0.50"
-                }
-            },
-            {
-                "name": "rmbAmount",
-                "expression": null,
-                "value": "1000",
-                "children": null,
-                "params": {}
-            }
-        ],
-        "params": {
-            "benchmarkInterestRate": "0.25",
-            "rmbAmount": "1000"
-        }
-    }));
+    const [data, setData] = useState({});
 
-    console.log(data);
+    const handleChange = (data: any) => {
+        setData(transformData(data));
+    }
 
     return (
         <div className='w-screen h-screen bg-[#f5f5f5] reletive'>
@@ -68,7 +47,7 @@ export default function Flow() {
                     <span className="font-bold text-base mr-2">定价结果计算过程</span>
                     <span className="text-sm text-[#00000073]">PR1026189</span>
                 </Panel>
-                <Menu/>
+                <Menu onChange={handleChange} />
                 <Controls/>
                 <MiniMap/>
             </ReactFlow>
