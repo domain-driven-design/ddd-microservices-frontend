@@ -21,6 +21,8 @@ export type TProps = {
     last?: boolean;
     first?: boolean;
     root?: boolean;
+    onClick?: (value: string) => void;
+    selectedNode?: string;
 }
 
 const BackgroundAndOperatorMap: Record<EOperator, string> = {
@@ -32,9 +34,8 @@ const BackgroundAndOperatorMap: Record<EOperator, string> = {
     [EOperator.MAX]: 'bg-functional-help'
 }
 
-export default memo(({data, defaultShowGroupNode, last, root, first}: TProps) => {
+export default memo(({data, defaultShowGroupNode, selectedNode, root, first, onClick}: TProps) => {
     const {data: variableMap, isLoading} = useFormulaVariableMap();
-    const store = useStore((store) => store);
     const {setCenter, setViewport} = useReactFlow();
     const transform = useStore((state) => state.transform);
     const nodeRef = useRef<HTMLDivElement>(null);
@@ -42,7 +43,6 @@ export default memo(({data, defaultShowGroupNode, last, root, first}: TProps) =>
     const [showGroupNode, setShowGroupNode] = useState(defaultShowGroupNode);
     const {getTagFlag, getTagFullText} = useTagText();
     const formulaModalControl = useModalControl();
-
 
     const childrenNotEqualParams = data.children?.length !== Object.keys(data.params || {}).length;
     const hasFormulaModal = (data.children?.length === 0 || childrenNotEqualParams) && data.expression;
@@ -53,6 +53,7 @@ export default memo(({data, defaultShowGroupNode, last, root, first}: TProps) =>
 
     const handleClick = () => {
         if (hasGroupNode) {
+            onClick?.(data.name);
             setShowGroupNode(!showGroupNode);
             return;
         }
@@ -66,8 +67,20 @@ export default memo(({data, defaultShowGroupNode, last, root, first}: TProps) =>
             return;
         } else {
             formulaModalControl.open();
-            // modalRef.current.modalWidth
         }
+    }
+
+    const handleFormulaModalClose = () => {
+        formulaModalControl.close();
+        setTimeout(() => {
+            setViewport({
+                zoom: 1,
+                x: 264,
+                y: 80,
+            }, {
+                duration: 200
+            })
+        })
     }
 
     useEffect(() => {
@@ -81,7 +94,6 @@ export default memo(({data, defaultShowGroupNode, last, root, first}: TProps) =>
             }
         })
     }, [modalRef.current?.modalWidth, formulaModalControl.visible])
-
 
     useEffect(() => {
         if (data) {
@@ -97,6 +109,13 @@ export default memo(({data, defaultShowGroupNode, last, root, first}: TProps) =>
             });
         }
     }, [data])
+
+    useEffect(() => {
+        console.log(selectedNode);
+        if (selectedNode && data.name !== selectedNode) {
+            setShowGroupNode(false);
+        }
+    }, [selectedNode])
 
     return (
         <div className="relative flex">
@@ -132,10 +151,7 @@ export default memo(({data, defaultShowGroupNode, last, root, first}: TProps) =>
                     }}
                 />
             )}
-
-            {isLoading ? (
-                <Spin/>
-            ) : (
+            <Spin spinning={isLoading}>
                 <div
                     ref={nodeRef}
                     className={cn(
@@ -152,7 +168,7 @@ export default memo(({data, defaultShowGroupNode, last, root, first}: TProps) =>
                                 tooltip={getTagFullText(data.name)}
                             />
                         )}
-                        <span className="font-bold text-sm">{variable?.name}</span>
+                        <span className="font-bold text-sm truncate">{variable?.name}</span>
                         {hasFormulaModal && (
                             <div className={cn("w-4 h-4 rounded inline-flex items-center justify-center", {
                                 "bg-[#FFA940]": data.operator === EOperator.ADD || (!root && !data.operator),
@@ -168,12 +184,12 @@ export default memo(({data, defaultShowGroupNode, last, root, first}: TProps) =>
                         {formatNodeValue(data.value, variable?.type)}
                     </div>
                 </div>
-            )}
+            </Spin>
             {hasFormulaModal && formulaModalControl.visible && (
                 <FormulaModal
                     ref={modalRef}
                     data={data}
-                    onClose={formulaModalControl.close}
+                    onClose={handleFormulaModalClose}
                     visible={formulaModalControl.visible}
                 />
             )}

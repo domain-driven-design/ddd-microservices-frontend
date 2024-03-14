@@ -1,16 +1,15 @@
 import ReactFlow, {MiniMap, Controls} from 'reactflow';
 import 'reactflow/dist/style.css';
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import Node from "../../components/Node.tsx";
 import Panel from "../../components/Panel.tsx";
 import {transformData} from "../../utils/common.ts";
 import Menu from "../../components/Menu.tsx";
-import {Spin} from "antd";
 
 const nodeTypes = {
     price: (props: any) => {
         if (!props.data) {
-            return <Spin />
+            return null
         }
 
         return <Node {...props} root last first/>;
@@ -45,9 +44,9 @@ export default function Flow() {
             >
                 <Panel className="top-6 left-6 px-4 py-2">
                     <span className="font-bold text-base mr-2">定价结果计算过程</span>
-                    <span className="text-sm text-[#00000073]">PR1026189</span>
+                    {/*<span className="text-sm text-[#00000073]">PR1026189</span>*/}
                 </Panel>
-                <Menu onChange={handleChange} />
+                <Menu onChange={handleChange}/>
                 <Controls/>
                 <MiniMap/>
             </ReactFlow>

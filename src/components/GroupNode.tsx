@@ -1,7 +1,7 @@
 import Node from "./Node.tsx";
 import {TNodeData} from "../types/calculate.ts";
 import {motion} from "framer-motion";
-import {forwardRef} from "react";
+import {forwardRef, useState} from "react";
 
 type TProps = {
     data: TNodeData[];
@@ -9,6 +9,8 @@ type TProps = {
 }
 
 const GroupNode = forwardRef<HTMLDivElement, TProps>(({data, nodeWidth}, ref) => {
+    const [selectedNode, setSelectedNode] = useState<string>();
+
     return (
         <motion.div
             ref={ref}
@@ -33,9 +35,11 @@ const GroupNode = forwardRef<HTMLDivElement, TProps>(({data, nodeWidth}, ref) =>
         >
             {data.map((item, index) => (
                 <Node
+                    selectedNode={selectedNode}
                     first={index === 0}
                     last={index === data.length - 1}
                     data={item}
+                    onClick={(nodeName: string) => setSelectedNode(nodeName)}
                 />
             ))}
         </motion.div>
